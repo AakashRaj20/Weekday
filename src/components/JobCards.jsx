@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
+import JobDialougeBox from "./JobDialougeBox";
 
 const JobCards = () => {
   const companyNameStyle = {
@@ -59,7 +60,10 @@ const JobCards = () => {
     <Grid container columnSpacing={10} rowSpacing={5}>
       {fetchedJobs.jdList.map((job) => (
         <Grid item xs={12} sm={6} lg={4} key={job.id}>
-          <Card elevation={3} style={{ borderRadius: "1.5rem", padding: "1rem 2rem" }}>
+          <Card
+            elevation={3}
+            style={{ borderRadius: "1.5rem", padding: "1rem 2rem" }}
+          >
             <Box style={{ display: "flex", padding: "20px", gap: "10px" }}>
               <img
                 style={{ width: "35px", height: "35px" }}
@@ -90,7 +94,15 @@ const JobCards = () => {
               Estimated Salary: {`₹${job.minJdSalary} - ${job.maxJdSalary} LPA`}
               <CheckBoxIcon color="success" />
             </Typography>
-            <CardContent>
+            <CardContent
+              sx={{
+                maxHeight: "250px",
+                height: "100%",
+                overflow: "hidden",
+                maskImage:
+                  "linear-gradient(rgb(255, 255, 255), rgb(255, 255, 255), rgba(255, 255, 255, 0))",
+              }}
+            >
               <Typography
                 style={{ fontWeight: 500, fontSize: "20px" }}
                 varinat="h6"
@@ -98,25 +110,15 @@ const JobCards = () => {
                 About Company:
               </Typography>
               <Typography
-                style={{ fontWeight: 300, fontSize: "15px" }}
+                sx={{ fontWeight: 300, fontSize: "15px" }}
                 varinat="body1"
               >
                 {job.jobDetailsFromCompany}
               </Typography>
-              <Box>
-                <Typography varinat="body1" sx={{ color: "blue", position: "relative", top: "-20px",  }}>
-                  View Job
-                </Typography>
-              </Box>
-              <Box style={{ margin: "15px auto" }}>
-                <Typography>
-                  Minimum Experience: <br />
-                  <span>{job.minExp} years</span>
-                </Typography>
-              </Box>
             </CardContent>
+            <JobDialougeBox jobDescription={job.jobDetailsFromCompany} />
             <CardActions
-              style={{
+              sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "15px",
@@ -125,14 +127,30 @@ const JobCards = () => {
                 padding: "0 18px",
               }}
             >
+              <Box sx={{ margin: "15px auto" }}>
+                <Typography sx={{ textAlign: "start" }}>
+                  Minimum Experience: <br />
+                  <span>{job.minExp} years</span>
+                </Typography>
+              </Box>
               <Button
                 fullWidth
                 variant="contained"
-                style={{ display: "flex", gap: "10px", backgroundColor: "#55EFC4", color: "black", textTransform: "none"}}
+                sx={{
+                  display: "flex",
+                  gap: "10px",
+                  backgroundColor: "#55EFC4",
+                  color: "black",
+                  textTransform: "none",
+                }}
               >
                 <ElectricBoltIcon style={{ color: "yellow" }} /> Easy Apply
               </Button>
-              <Button fullWidth variant="contained" style={{ marginLeft: "0", textTransform: "none" }}>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{ marginLeft: "0", textTransform: "none" }}
+              >
                 Unlock referal asks
               </Button>
             </CardActions>
