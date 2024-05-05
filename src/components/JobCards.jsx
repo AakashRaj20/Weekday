@@ -59,7 +59,7 @@ const JobCards = () => {
     <Grid container columnSpacing={10} rowSpacing={5}>
       {fetchedJobs.jdList.map((job) => (
         <Grid item xs={12} sm={6} lg={4} key={job.id}>
-          <Card>
+          <Card elevation={3} style={{ borderRadius: "1.5rem", padding: "1rem 2rem" }}>
             <Box style={{ display: "flex", padding: "20px", gap: "10px" }}>
               <img
                 style={{ width: "35px", height: "35px" }}
@@ -104,6 +104,11 @@ const JobCards = () => {
                 {job.jobDetailsFromCompany}
               </Typography>
               <Box>
+                <Typography varinat="body1" sx={{ color: "blue", position: "relative", top: "-20px",  }}>
+                  View Job
+                </Typography>
+              </Box>
+              <Box style={{ margin: "15px auto" }}>
                 <Typography>
                   Minimum Experience: <br />
                   <span>{job.minExp} years</span>
@@ -114,20 +119,20 @@ const JobCards = () => {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                //justifyContent: "center",
                 gap: "15px",
                 alignItems: "start",
                 marginLeft: "0",
+                padding: "0 18px",
               }}
             >
               <Button
                 fullWidth
                 variant="contained"
-                style={{ backgroundColor: "#55EFC4", color: "black" }}
+                style={{ display: "flex", gap: "10px", backgroundColor: "#55EFC4", color: "black", textTransform: "none"}}
               >
                 <ElectricBoltIcon style={{ color: "yellow" }} /> Easy Apply
               </Button>
-              <Button fullWidth variant="contained" style={{ marginLeft: "0" }}>
+              <Button fullWidth variant="contained" style={{ marginLeft: "0", textTransform: "none" }}>
                 Unlock referal asks
               </Button>
             </CardActions>
