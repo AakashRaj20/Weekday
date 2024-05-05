@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchJobs,
@@ -13,11 +13,14 @@ import {
   Button,
   Box,
   Typography,
-  Link
+  Link,
+  Avatar
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import JobDialougeBox from "./JobDialougeBox";
+import Profile1 from "../assets/profile.webp";
+import Profile2 from "../assets/profile2.webp";
 
 const JobCards = () => {
   const companyNameStyle = {
@@ -46,6 +49,17 @@ const JobCards = () => {
     alignItem: "center",
     color: "#89919b",
   };
+
+  const referralImages = [
+    {
+      name: "referal person 1",
+      img: Profile1,
+    },
+    {
+      name: "referal person 2",
+      img: Profile2,
+    },
+  ];
 
   const dispatch = useDispatch();
 
@@ -76,7 +90,11 @@ const JobCards = () => {
         <Grid item xs={12} sm={6} lg={4} key={job.id}>
           <Card
             elevation={3}
-            sx={{ borderRadius: "1.5rem", p: { sm: "0.5rem", xl: "1rem 2rem" }, pb: { xs: "1rem", sm: "auto" } }}
+            sx={{
+              borderRadius: "1.5rem",
+              p: { sm: "0.5rem", xl: "1rem 2rem" },
+              pb: { xs: "1rem", sm: "auto" },
+            }}
           >
             <Box style={{ display: "flex", padding: "20px", gap: "10px" }}>
               <img
@@ -131,7 +149,10 @@ const JobCards = () => {
                 {job.jobDetailsFromCompany}
               </Typography>
             </CardContent>
-            <JobDialougeBox jdLink={job.jdLink} jobDescription={job.jobDetailsFromCompany} />
+            <JobDialougeBox
+              jdLink={job.jdLink}
+              jobDescription={job.jobDetailsFromCompany}
+            />
             <CardActions
               sx={{
                 display: "flex",
@@ -178,6 +199,7 @@ const JobCards = () => {
                     "&:hover": {
                       backgroundColor: "#55EFC4",
                     },
+                    py: "0.75rem",
                   }}
                 >
                   <ElectricBoltIcon style={{ color: "yellow" }} /> Easy Apply
@@ -186,8 +208,11 @@ const JobCards = () => {
               <Button
                 fullWidth
                 variant="contained"
-                sx={{ marginLeft: "0", textTransform: "none" }}
+                sx={{ marginLeft: "0", textTransform: "none", gap: "10px", py: "0.75rem"}}
               >
+                {referralImages.map((referralImage, index) => (
+                  <Avatar sx={{ width: "30px", height: "30px", filter: "blur(1.3px)" }} key={index} alt={referralImage.name} src={referralImage.img} />
+                ))}
                 Unlock referal asks
               </Button>
             </CardActions>
