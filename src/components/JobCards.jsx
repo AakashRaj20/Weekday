@@ -13,6 +13,7 @@ import {
   Button,
   Box,
   Typography,
+  Link
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
@@ -43,6 +44,7 @@ const JobCards = () => {
     display: "flex",
     gap: "6px",
     alignItem: "center",
+    color: "#89919b",
   };
 
   const dispatch = useDispatch();
@@ -54,6 +56,18 @@ const JobCards = () => {
     dispatch(fetchJobs());
   }, []);
 
+  const handleSalaryNull = (minSalary, maxSalary) => {
+    if (minSalary === null && maxSalary === null) {
+      return "Not Specified";
+    } else if (minSalary === null) {
+      return `₹${maxSalary} LPA`;
+    } else if (maxSalary === null) {
+      return `₹${minSalary} LPA`;
+    } else {
+      return `₹${minSalary} - ${maxSalary} LPA`;
+    }
+  }
+
   return isLoading ? (
     <div>Loading</div>
   ) : (
@@ -62,7 +76,7 @@ const JobCards = () => {
         <Grid item xs={12} sm={6} lg={4} key={job.id}>
           <Card
             elevation={3}
-            style={{ borderRadius: "1.5rem", padding: "1rem 2rem" }}
+            sx={{ borderRadius: "1.5rem", p: { sm: "0.5rem", xl: "1rem 2rem" }, pb: { xs: "1rem", sm: "auto" } }}
           >
             <Box style={{ display: "flex", padding: "20px", gap: "10px" }}>
               <img
@@ -91,7 +105,8 @@ const JobCards = () => {
               </Box>
             </Box>
             <Typography style={salaryStyle}>
-              Estimated Salary: {`₹${job.minJdSalary} - ${job.maxJdSalary} LPA`}
+              Estimated Salary:{" "}
+              {handleSalaryNull(job.minJdSalary, job.maxJdSalary)}
               <CheckBoxIcon color="success" />
             </Typography>
             <CardContent
@@ -116,7 +131,7 @@ const JobCards = () => {
                 {job.jobDetailsFromCompany}
               </Typography>
             </CardContent>
-            <JobDialougeBox jobDescription={job.jobDetailsFromCompany} />
+            <JobDialougeBox jdLink={job.jdLink} jobDescription={job.jobDetailsFromCompany} />
             <CardActions
               sx={{
                 display: "flex",
@@ -127,25 +142,47 @@ const JobCards = () => {
                 padding: "0 18px",
               }}
             >
-              <Box sx={{ margin: "15px auto" }}>
-                <Typography sx={{ textAlign: "start" }}>
+              <Box sx={{ margin: "15px 0" }}>
+                <Typography
+                  sx={{
+                    textAlign: "start",
+                    color: "#8b8b8b",
+                    fontSize: "15px",
+                    fontWeight: 500,
+                    letterSpacing: "1px",
+                  }}
+                >
                   Minimum Experience: <br />
-                  <span>{job.minExp} years</span>
+                  <span style={{ color: "black" }}>
+                    {job.minExp === null
+                      ? "Not Specified"
+                      : `${job.minExp} years`}
+                  </span>
                 </Typography>
               </Box>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{
-                  display: "flex",
-                  gap: "10px",
-                  backgroundColor: "#55EFC4",
-                  color: "black",
-                  textTransform: "none",
-                }}
+              <Link
+                href={job.jdLink}
+                target="_blank"
+                underline="none"
+                sx={{ width: "100%" }}
               >
-                <ElectricBoltIcon style={{ color: "yellow" }} /> Easy Apply
-              </Button>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  sx={{
+                    display: "flex",
+                    gap: "10px",
+                    backgroundColor: "#55EFC4",
+                    color: "black",
+                    textTransform: "none",
+                    "&:hover": {
+                      backgroundColor: "#55EFC4",
+                    },
+                  }}
+                >
+                  <ElectricBoltIcon style={{ color: "yellow" }} /> Easy Apply
+                </Button>
+              </Link>
               <Button
                 fullWidth
                 variant="contained"

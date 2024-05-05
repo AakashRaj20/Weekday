@@ -1,8 +1,17 @@
 import { useState } from "react";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, Typography } from "@mui/material";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Box,
+  Typography,
+  Link,
+} from "@mui/material";
 import ElectricBolt from "@mui/icons-material/ElectricBolt";
 
-const JobDialougeBox = ({ jobDescription }) => {
+const JobDialougeBox = ({ jobDescription, jdLink }) => {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -43,18 +52,21 @@ const JobDialougeBox = ({ jobDescription }) => {
           <Typography variant="body1">{jobDescription}</Typography>
         </DialogContent>
         <DialogActions>
-          <Button
-            varinat="contained"
-            sx={{
-              display: "flex",
-              gap: "5px",
-              backgroundColor: "#55EFC4",
-              color: "black",
-              textTransform: "none",
-            }}
-          >
-            <ElectricBolt sx={{ color: "yellow" }} /> Easy Apply
-          </Button>
+          <Link href={jdLink} target="_blank" underline="none">
+            <Button
+              varinat="contained"
+              sx={{
+                p: "0.5rem 3rem",
+                display: "flex",
+                gap: "5px",
+                backgroundColor: "#55EFC4",
+                color: "black",
+                textTransform: "none",
+              }}
+            >
+              <ElectricBolt sx={{ color: "yellow" }} /> Easy Apply
+            </Button>
+          </Link>
         </DialogActions>
       </Dialog>
     </Box>
