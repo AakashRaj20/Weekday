@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchJobs,
@@ -14,10 +14,11 @@ import {
   Box,
   Typography,
   Link,
-  Avatar
+  Avatar,
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import JobDialougeBox from "./JobDialougeBox";
 import Profile1 from "../assets/profile.webp";
 import Profile2 from "../assets/profile2.webp";
@@ -66,6 +67,8 @@ const JobCards = () => {
   const fetchedJobs = useSelector(selectJobs);
   const isLoading = useSelector(selectLoading);
 
+  const [visibleJobs, setVisibleJobs] = useState(6); // Initially show 6 jobs
+
   useEffect(() => {
     dispatch(fetchJobs());
   }, []);
@@ -80,20 +83,29 @@ const JobCards = () => {
     } else {
       return `₹${minSalary} - ${maxSalary} LPA`;
     }
-  }
+  };
+
+  const handleLoadMore = () => {
+    setVisibleJobs((prevVisibleJobs) => prevVisibleJobs + 3); // Increase visible jobs by 3
+  };
 
   return isLoading ? (
     <div>Loading</div>
   ) : (
     <Grid container columnSpacing={10} rowSpacing={5}>
-      {fetchedJobs.jdList.map((job) => (
+      {fetchedJobs.jdList.slice(0, visibleJobs).map((job) => (
         <Grid item xs={12} sm={6} lg={4} key={job.id}>
           <Card
+          className="card-animation"
             elevation={3}
             sx={{
               borderRadius: "1.5rem",
               p: { sm: "0.5rem", xl: "1rem 2rem" },
               pb: { xs: "1rem", sm: "auto" },
+              transition: "transform 0.3s ease",
+              "&:hover": {
+                transform: "scale(1.05)", // Zoom effect on hover
+              },
             }}
           >
             <Box style={{ display: "flex", padding: "20px", gap: "10px" }}>
@@ -208,10 +220,24 @@ const JobCards = () => {
               <Button
                 fullWidth
                 variant="contained"
-                sx={{ marginLeft: "0", textTransform: "none", gap: "10px", py: "0.75rem"}}
+                sx={{
+                  marginLeft: "0",
+                  textTransform: "none",
+                  gap: "10px",
+                  py: "0.75rem",
+                }}
               >
                 {referralImages.map((referralImage, index) => (
-                  <Avatar sx={{ width: "30px", height: "30px", filter: "blur(1.3px)" }} key={index} alt={referralImage.name} src={referralImage.img} />
+                  <Avatar
+                    sx={{
+                      width: "30px",
+                      height: "30px",
+                      filter: "blur(1.3px)",
+                    }}
+                    key={index}
+                    alt={referralImage.name}
+                    src={referralImage.img}
+                  />
                 ))}
                 Unlock referal asks
               </Button>
@@ -219,6 +245,26 @@ const JobCards = () => {
           </Card>
         </Grid>
       ))}
+      {visibleJobs < fetchedJobs.jdList.length && (
+        <Grid item xs={12}>
+          <Button
+            onClick={handleLoadMore}
+            variant="text"
+            fullWidth
+            sx={{
+              mt: 2,
+              textTransform: "none",
+              color: "black",
+              fontSize: "20px",
+              fontWeight: 600,
+              letterSpacing: "1px",
+              gap: "10px",
+            }}
+          >
+            <RefreshIcon /> Load More
+          </Button>
+        </Grid>
+      )}
     </Grid>
   );
 };
