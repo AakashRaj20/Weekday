@@ -56,9 +56,9 @@ const JobCards = () => {
   return isLoading ? (
     <div>Loading</div>
   ) : (
-    <Grid container>
+    <Grid container columnSpacing={10} rowSpacing={5}>
       {fetchedJobs.jdList.map((job) => (
-        <Grid item xs={12} sm={6} md={4} key={job.id}>
+        <Grid item xs={12} sm={6} lg={4} key={job.id}>
           <Card>
             <Box style={{ display: "flex", padding: "20px", gap: "10px" }}>
               <img
