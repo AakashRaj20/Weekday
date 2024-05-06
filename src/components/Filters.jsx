@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Grid,
   Select,
@@ -6,36 +6,41 @@ import {
   InputLabel,
   FormControl,
   Chip,
-  OutlinedInput,
+  TextField,
   Box,
+  InputAdornment,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { useDispatch } from "react-redux";
+import { selectedFilters, setCompanyname } from "../redux_store/slices/jobsApiSlice";
+//import CloseIcon from "@mui/icons-material/Close";
 
 const Filters = () => {
   const filterTypes = [
     {
       name: "role",
+      type: "multiple",
       label: "Roles",
       options: [
-        { name: "Frontend", value: "Frontend" },
-        { name: "Backend", value: "Backend" },
-        { name: "Fullstack", value: "Fullstack" },
-        { name: "Devops", value: "Devops" },
-        { name: "IOS", value: "IOS" },
-        { name: "Android", value: "Android" },
-        { name: "React Native", value: "React Native" },
-        { name: "Flutter", value: "Flutter" },
-        { name: "Tech Lead", value: "Tech Lead" },
-        { name: "Project Manager", value: "Project Manager" },
-        { name: "QA", value: "QA" },
-        { name: "Web3", value: "Web3" },
-        { name: "Data Science", value: "Data Science" },
-        { name: "Machine Learning", value: "Machine Learning" },
+        { name: "Frontend", value: "frontend" },
+        { name: "Backend", value: "backend" },
+        { name: "Fullstack", value: "fullstack" },
+        { name: "Devops", value: "devops" },
+        { name: "IOS", value: "ios" },
+        { name: "Android", value: "android" },
+        { name: "React Native", value: "react native" },
+        { name: "Flutter", value: "flutter" },
+        { name: "Tech Lead", value: "tech lead" },
+        { name: "Project Manager", value: "project manager" },
+        { name: "QA", value: "qa" },
+        { name: "Web3", value: "web3" },
+        { name: "Data Science", value: "data science" },
+        { name: "Machine Learning", value: "machine learning" },
       ],
     },
     {
-      name: "min experience",
+      name: "min_experience",
       label: "Experience",
+      type: "single",
       options: [
         { name: "1", value: "1" },
         { name: "2", value: "2" },
@@ -50,8 +55,9 @@ const Filters = () => {
       ],
     },
     {
-      name: "Remote",
+      name: "remote",
       label: "Remote",
+      type: "multiple",
       options: [
         { name: "Remote", value: "Remote" },
         { name: "On-site", value: "On-site" },
@@ -59,8 +65,9 @@ const Filters = () => {
       ],
     },
     {
-      name: "Tech Stack",
+      name: "tech_stack",
       label: "Tech Stack",
+      type: "multiple",
       options: [
         { name: "React", value: "React" },
         { name: "Node", value: "Node" },
@@ -79,59 +86,60 @@ const Filters = () => {
       ],
     },
     {
-      name: "Min base salary",
+      name: "min_base_salary",
       label: "Minimum Base Pay Salary",
+      type: "single",
       options: [
-        { name: "OL", value: "0L" },
-        { name: "10L", value: "10L" },
-        { name: "20L", value: "20L" },
-        { name: "30L", value: "30L" },
-        { name: "40L", value: "40L" },
-        { name: "50L", value: "50L" },
-        { name: "60L", value: "60L" },
-        { name: "70L", value: "70L" },
+        { name: "OL", value: 0 },
+        { name: "10L", value: 10 },
+        { name: "20L", value: 20 },
+        { name: "30L", value: 30 },
+        { name: "40L", value: 40 },
+        { name: "50L", value: 50 },
+        { name: "60L", value: 60 },
+        { name: "70L", value: 70 },
       ],
     },
     {
-      name: "Company Name",
-      label: "Company Name",
-      options: [
-        { name: "Google", value: "Google" },
-        { name: "Facebook", value: "Facebook" },
-        { name: "Amazon", value: "Amazon" },
-        { name: "Microsoft", value: "Microsoft" },
-        { name: "Apple", value: "Apple" },
-        { name: "Netflix", value: "Netflix" },
-        { name: "Tesla", value: "Tesla" },
-        { name: "Twitter", value: "Twitter" },
-        { name: "Uber", value: "Uber" },
-        { name: "Airbnb", value: "Airbnb" },
-        { name: "Coinbase", value: "Coinbase" },
-        { name: "Robinhood", value: "Robinhood" },
-        { name: "Stripe", value: "Stripe" },
-        { name: "Slack", value: "Slack" },
-        { name: "Zoom", value: "Zoom" },
-      ],
-    },
-    {
-      name: "Location",
+      name: "location",
       label: "Location",
+      type: "multiple",
       options: [
-        { name: "Bangalore", value: "Bangalore" },
-        { name: "Mumbai", value: "Mumbai" },
-        { name: "Delhi", value: "Delhi" },
-        { name: "Chennai", value: "Chennai" },
-        { name: "Pune", value: "Pune" },
-        { name: "Hyderabad", value: "Hyderabad" },
-        { name: "Kolkata", value: "Kolkata" },
-        { name: "GuruGram", value: "GuruGram" },
-        { name: "Noida", value: "Noida" },
-        { name: "Ahmedabad", value: "Ahmedabad" },
+        { name: "Bangalore", value: "bangalore" },
+        { name: "Mumbai", value: "mumbai" },
+        { name: "Delhi", value: "delhi" },
+        { name: "Chennai", value: "chennai" },
+        { name: "Pune", value: "pune" },
+        { name: "Hyderabad", value: "hyderabad" },
+        { name: "Kolkata", value: "kolkata" },
+        { name: "GuruGram", value: "guruGram" },
+        { name: "Noida", value: "noida" },
+        { name: "Ahmedabad", value: "ahmedabad" },
       ],
     },
   ];
 
   const [selectedValues, setSelectedValues] = useState({});
+  const [searchValue, setSearchvalue] = useState("")
+  const [openStates, setOpenStates] = useState(
+    Array(filterTypes.length).fill(false)
+  );
+
+  const handleOpen = (index) => {
+    setOpenStates((prevOpenStates) => {
+      const newOpenStates = [...prevOpenStates];
+      newOpenStates[index] = true;
+      return newOpenStates;
+    });
+  };
+
+  const handleClose = (index) => {
+    setOpenStates((prevOpenStates) => {
+      const newOpenStates = [...prevOpenStates];
+      newOpenStates[index] = false;
+      return newOpenStates;
+    });
+  };
 
   const handleChange = (event, filterName) => {
     const { value } = event.target;
@@ -141,21 +149,40 @@ const Filters = () => {
     }));
   };
 
-  const handleDelete = (e, value, filterName) => {
-    console.log("Deleting:", value, "from filter:", filterName);
+  const handleDelete = (e, value) => {
+    // if (e.defaultPrevented) return; // Exits here if event has been handled
+    // e.preventDefault();
+    // console.log(value);
+    // setSelectedValues((prevSelectedValues) => {
+    //   console.log("Previous selected values:", prevSelectedValues);
+
+    //   const updatedValues = { ...prevSelectedValues };
+    //   updatedValues[filterName] = updatedValues[filterName].filter(
+    //     (selectedValue) => selectedValue !== value
+    //   );
+
+    //   console.log("Updated values:", updatedValues);
+    //   return updatedValues;
+    // });
+    //e.preventDefault();
+    if (e.defaultPrevented) return; // Exits here if event has been handled
     e.preventDefault();
-    setSelectedValues((prevSelectedValues) => {
-      console.log("Previous selected values:", prevSelectedValues);
 
-      const updatedValues = { ...prevSelectedValues };
-      updatedValues[filterName] = updatedValues[filterName].filter(
-        (selectedValue) => selectedValue !== value
-      );
-
-      console.log("Updated values:", updatedValues);
-      return updatedValues;
-    });
+    console.log(value);
   };
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(selectedFilters(selectedValues));
+  }, [selectedValues]);
+
+  console.log({ selectedValues });
+
+  const handleSearchChange = (event) => {
+    dispatch(setCompanyname(event.target.value));
+    setSearchvalue(event.target.value);
+  } 
 
   return (
     <Grid container columns={{ lg: 14 }} spacing={2}>
@@ -166,41 +193,85 @@ const Filters = () => {
               <InputLabel id={`select-label-${each.name}`}>
                 {each.label}
               </InputLabel>
-              <Select
-                autoWidth
-                labelId={`select-label-${each.name}`}
-                id={`select-${each.name}`}
-                multiple
-                value={selectedValues[each.name] || []} // Get selected values for specific filter
-                onChange={(e) => handleChange(e, each.name)}
-                input={
-                  <OutlinedInput
-                    id={`select-outlined-${each.name}`}
-                    label={each.label}
-                  />
-                }
-                renderValue={(selected) => (
-                  <Box sx={{ display: "flex", gap: 0.5 }}>
-                    {selected.map((value) => (
-                      <Chip
-                        key={value}
-                        label={value}
-                        onDelete={(e) => handleDelete(e, value, each.name)}
-                      />
-                    ))}
-                  </Box>
-                )}
-              >
-                {each.options.map((option, index) => (
-                  <MenuItem key={index} value={option.value}>
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </Select>
+              {each.type === "multiple" ? (
+                <Select
+                  open={openStates[index]}
+                  onClose={() => handleClose(index)}
+                  onOpen={() => handleOpen(index)}
+                  multiple
+                  labelId={`select-label-${each.name}`}
+                  id={`select-${each.name}`}
+                  value={selectedValues[each.name] || []}
+                  label={each.label}
+                  onChange={(e) => handleChange(e, each.name)}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={value}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent dropdown menu from opening
+                            handleDelete(e, value, each.name); // Call delete function
+                          }}
+                        />
+                      ))}
+                    </Box>
+                  )}
+                >
+                  {each.options.map((option, ind) => (
+                    <MenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(e, option.name);
+                        handleClose(index);
+                      }}
+                      key={ind}
+                      value={option.value}
+                    >
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              ) : (
+                <Select
+                  open={openStates[index]}
+                  onClose={() => handleClose(index)}
+                  onOpen={() => handleOpen(index)}
+                  labelId={`select-label-${each.name}`}
+                  id={`select-${each.name}`}
+                  value={selectedValues[each.name] || ""}
+                  label={each.label}
+                  onChange={(e) => handleChange(e, each.name)}
+                >
+                  {each.options.map((option, ind) => (
+                    <MenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(e, option.name);
+                        handleClose(index);
+                      }}
+                      key={ind}
+                      value={option.value}
+                    >
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
             </FormControl>
           </Grid>
         );
       })}
+      <Grid item xs={12} md={6} lg={2}>
+        <TextField
+          label="Seacrh Company Name"
+          variant="outlined"
+          value={searchValue}
+          fullWidth
+          onChange={handleSearchChange}
+        />
+      </Grid>
     </Grid>
   );
 };
