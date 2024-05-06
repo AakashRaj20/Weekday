@@ -1,18 +1,16 @@
 import { useState, useEffect } from "react";
 import {
   Grid,
-  Select,
-  MenuItem,
-  InputLabel,
   FormControl,
-  Chip,
   TextField,
-  Box,
-  InputAdornment,
+  Autocomplete,
 } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { selectedFilters, setCompanyname } from "../redux_store/slices/jobsApiSlice";
-//import CloseIcon from "@mui/icons-material/Close";
+import {
+  selectedFilters,
+  setCompanyname,
+} from "../redux_store/slices/jobsApiSlice";
+
 
 const Filters = () => {
   const filterTypes = [
@@ -120,56 +118,17 @@ const Filters = () => {
   ];
 
   const [selectedValues, setSelectedValues] = useState({});
-  const [searchValue, setSearchvalue] = useState("")
-  const [openStates, setOpenStates] = useState(
-    Array(filterTypes.length).fill(false)
-  );
-
-  const handleOpen = (index) => {
-    setOpenStates((prevOpenStates) => {
-      const newOpenStates = [...prevOpenStates];
-      newOpenStates[index] = true;
-      return newOpenStates;
-    });
-  };
-
-  const handleClose = (index) => {
-    setOpenStates((prevOpenStates) => {
-      const newOpenStates = [...prevOpenStates];
-      newOpenStates[index] = false;
-      return newOpenStates;
-    });
-  };
-
+  const [searchValue, setSearchvalue] = useState("");
+  
   const handleChange = (event, filterName) => {
-    const { value } = event.target;
+    let { value } = event.target;
     setSelectedValues((prevSelectedValues) => ({
       ...prevSelectedValues,
-      [filterName]: value, // Update selected values for specific filter
+      [filterName]: value,
     }));
   };
 
-  const handleDelete = (e, value) => {
-    // if (e.defaultPrevented) return; // Exits here if event has been handled
-    // e.preventDefault();
-    // console.log(value);
-    // setSelectedValues((prevSelectedValues) => {
-    //   console.log("Previous selected values:", prevSelectedValues);
-
-    //   const updatedValues = { ...prevSelectedValues };
-    //   updatedValues[filterName] = updatedValues[filterName].filter(
-    //     (selectedValue) => selectedValue !== value
-    //   );
-
-    //   console.log("Updated values:", updatedValues);
-    //   return updatedValues;
-    // });
-    //e.preventDefault();
-    if (e.defaultPrevented) return; // Exits here if event has been handled
-    e.preventDefault();
-
-    console.log(value);
-  };
+  console.log({ selectedValues });
 
   const dispatch = useDispatch();
 
@@ -182,88 +141,60 @@ const Filters = () => {
   const handleSearchChange = (event) => {
     dispatch(setCompanyname(event.target.value));
     setSearchvalue(event.target.value);
-  } 
+  };
 
   return (
-    <Grid container columns={{ lg: 14 }} spacing={2}>
+    <Grid
+      container
+      columns={{ xs: 14, sm: 14, md: 14, lg: 14, xl: 14 }}
+      spacing={2}
+    >
       {filterTypes.map((each, index) => {
         return (
-          <Grid item key={index} xs={12} md={6} lg={2}>
+          <Grid item key={index} xs={7} sm={7} md={7} lg={2}>
             <FormControl fullWidth>
-              <InputLabel id={`select-label-${each.name}`}>
-                {each.label}
-              </InputLabel>
               {each.type === "multiple" ? (
-                <Select
-                  open={openStates[index]}
-                  onClose={() => handleClose(index)}
-                  onOpen={() => handleOpen(index)}
+                <Autocomplete
+                  sx={{ m: 1, width: "100%" }}
                   multiple
-                  labelId={`select-label-${each.name}`}
-                  id={`select-${each.name}`}
+                  options={each.options.map((option) => option.name)}
                   value={selectedValues[each.name] || []}
-                  label={each.label}
-                  onChange={(e) => handleChange(e, each.name)}
-                  renderValue={(selected) => (
-                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                      {selected.map((value) => (
-                        <Chip
-                          key={value}
-                          label={value}
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent dropdown menu from opening
-                            handleDelete(e, value, each.name); // Call delete function
-                          }}
-                        />
-                      ))}
-                    </Box>
+                  onChange={(e, newValue) =>
+                    handleChange({ target: { value: newValue } }, each.name)
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label={each.label}
+                      
+                    />
                   )}
-                >
-                  {each.options.map((option, ind) => (
-                    <MenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(e, option.name);
-                        handleClose(index);
-                      }}
-                      key={ind}
-                      value={option.value}
-                    >
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  
+                  
+                />
               ) : (
-                <Select
-                  open={openStates[index]}
-                  onClose={() => handleClose(index)}
-                  onOpen={() => handleOpen(index)}
-                  labelId={`select-label-${each.name}`}
-                  id={`select-${each.name}`}
-                  value={selectedValues[each.name] || ""}
-                  label={each.label}
-                  onChange={(e) => handleChange(e, each.name)}
-                >
-                  {each.options.map((option, ind) => (
-                    <MenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(e, option.name);
-                        handleClose(index);
-                      }}
-                      key={ind}
-                      value={option.value}
-                    >
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </Select>
+                <Autocomplete
+                  sx={{ m: 1, width: "100%" }}
+                  options={each.options.map((option) => option.name)}
+                  value={selectedValues[each.name] || []}
+                  onChange={(e, newValue) =>
+                    handleChange({ target: { value: newValue } }, each.name)
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label={each.label}
+                    />
+                  )}
+                />
               )}
             </FormControl>
           </Grid>
         );
       })}
-      <Grid item xs={12} md={6} lg={2}>
+      <Grid sx={{ display: "flex", alignItems: "center" }} item xs={14} md={14} lg={2}>
         <TextField
           label="Seacrh Company Name"
           variant="outlined"

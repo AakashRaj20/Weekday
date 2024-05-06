@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchJobs,
@@ -20,10 +20,10 @@ import {
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import JobDialougeBox from "./JobDialougeBox";
 import Profile1 from "../assets/profile.webp";
 import Profile2 from "../assets/profile2.webp";
+import InfiniteScroll from "./InfiniteScroll";
 
 const JobCards = () => {
   const companyNameStyle = {
@@ -91,36 +91,55 @@ const JobCards = () => {
 
   //console.log(selectedfilters.role.includes("frontend"));
 
+  // Convert selectedfilters.location to lowercase
+  const lowerCaseLocation = selectedfilters.location && selectedfilters.location.map((location) =>
+    location.toLowerCase()
+  );
+  const lowerCaseRole = selectedfilters.role && selectedfilters.role.map((role) => role.toLowerCase());
+
+  const min_base_salary = selectedfilters.min_base_salary && parseInt(
+    selectedfilters.min_base_salary.slice(0, -1)
+  );
+
+  // Create a new object to store the converted filters
+  const filtersLowerCase = {
+    ...selectedfilters,
+    location: lowerCaseLocation,
+    role: lowerCaseRole,
+    min_base_salary: min_base_salary,
+  };
+
   const filteredJobs =
     !isLoading &&
     fetchedJobs.jdList.filter((job) => {
       if (Object.keys(selectedfilters).length > 0) {
         if (
-          selectedfilters.min_experience !== null &&
+          filtersLowerCase.min_experience !== null &&
           job.minExp < parseInt(selectedfilters.min_experience)
         ) {
           return false;
         }
 
         if (
-          selectedfilters.role.length > 0 &&
-          !selectedfilters.role.includes(job.jobRole)
+          filtersLowerCase.role &&
+          filtersLowerCase.role.length > 0 &&
+          !filtersLowerCase.role.includes(job.jobRole)
         ) {
           return false;
         }
 
         if (
-          selectedfilters.location &&
-          selectedfilters.location.length > 0 &&
-          !selectedfilters.location.includes(job.location)
+          filtersLowerCase.location &&
+          filtersLowerCase.location.length > 0 &&
+          !filtersLowerCase.location.includes(job.location)
         ) {
           return false;
         }
 
         if (
-          selectedfilters.min_base_salary &&
-          selectedfilters.min_base_salary !== null &&
-          job.minJdSalary < selectedfilters.min_base_salary
+          filtersLowerCase.min_base_salary &&
+          filtersLowerCase.min_base_salary !== null &&
+          job.minJdSalary < filtersLowerCase.min_base_salary
         ) {
           return false;
         }
